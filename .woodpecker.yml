@@ -13,3 +13,26 @@ steps:
     when:
       branch: main
       event: push
+
+  build-and-push:
+    image: gcr.io/kaniko-project/executor:latest
+    environment:
+      DOCKER_CONFIG: /kaniko/.docker/
+    commands:
+      - mkdir -p /kaniko/.docker
+      - |
+        cat <<EOF > /kaniko/.docker/config.json
+        {
+          "auths": {
+            "https://index.docker.io/v1/": {
+              "username": "$${DOCKERHUB_USERNAME}",
+              "password": "$${DOCKER_PASSWORD}"
+            }
+          }
+        }
+        EOF
+      - /kaniko/executor \
+          --context=dir://. \
+          --dockerfile=Dockerfile \
+          --destination=docker.io/$${DOCKERHUB_USERNAME}/$${CI_REPO_NAME} \
+          --skip-tls-verify
