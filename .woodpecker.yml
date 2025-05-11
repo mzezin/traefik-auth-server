@@ -1,4 +1,4 @@
-pipeline:
+steps:
   set-repo-name:
     image: alpine
     commands:
