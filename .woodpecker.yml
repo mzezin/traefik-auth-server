@@ -1,25 +1,15 @@
 steps:
-  set-repo-name:
-    image: alpine
-    commands:
-      - echo "REPO_NAME=$(basename $CI_REPO)" >> $WOODPECKER_ENV
-    when:
-      branch: main
-      event: push
-
   build-and-push:
     image: docker
     commands:
       - echo "$${DOCKERHUB_TOKEN}" | docker login -u "$${DOCKERHUB_USERNAME}" --password-stdin
-      - docker build -t $${DOCKERHUB_USERNAME}/$${REPO_NAME}:latest .
-      - docker push $${DOCKERHUB_USERNAME}/$${REPO_NAME}:latest
+      - docker build -t $${DOCKERHUB_USERNAME}/$${CI_REPO_NAME}:latest .
+      - docker push $${DOCKERHUB_USERNAME}/$${CI_REPO_NAME}:latest
     environment:
       DOCKERHUB_USERNAME:
         from_secret: dockerhub_username
       DOCKERHUB_TOKEN:
         from_secret: dockerhub_token
-    depends_on:
-      - set-repo-name
     when:
       branch: main
       event: push
