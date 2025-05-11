@@ -10,9 +10,9 @@ steps:
     - COMMIT_SHA=${CI_COMMIT_SHA}
     - COMMIT_AUTHOR_EMAIL=${CI_COMMIT_AUTHOR_EMAIL}
     username:
-      from_secret: docker-username
+      from_secret: dockerhub_username
     password:
-      from_secret: docker-password
+      from_secret: dockerhub_token
       environment:
       DOCKERHUB_USERNAME:
         from_secret: dockerhub_username
