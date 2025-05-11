@@ -1,20 +1,5 @@
 steps:
   build-and-push:
-    image: docker
-    commands:
-      - echo "$${DOCKERHUB_TOKEN}" | docker login -u "$${DOCKERHUB_USERNAME}" --password-stdin
-      - docker build -t $${DOCKERHUB_USERNAME}/$${CI_REPO_NAME}:latest .
-      - docker push $${DOCKERHUB_USERNAME}/$${CI_REPO_NAME}:latest
-    environment:
-      DOCKERHUB_USERNAME:
-        from_secret: dockerhub_username
-      DOCKERHUB_TOKEN:
-        from_secret: dockerhub_token
-    when:
-      branch: main
-      event: push
-
-  build-and-push:
     image: gcr.io/kaniko-project/executor:latest
     environment:
       DOCKER_CONFIG: /kaniko/.docker/
