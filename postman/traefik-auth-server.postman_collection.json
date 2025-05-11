@@ -1,0 +1,400 @@
+{
+	"info": {
+		"name": "Traefik ForwardAuth Server",
+		"description": "Collection for testing the ForwardAuth server (port 3000), whitelist-only server (port 3001), and not-found server (port 3002) running on localhost. Covers Basic Auth and IP whitelist.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth Server",
+			"item": [
+				{
+					"name": "Successful Basic Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('X-Forwarded-User header is set', function () {",
+									"    pm.expect(pm.response.headers.get('X-Forwarded-User')).to.equal(pm.variables.get(\"auth_username\"));",
+									"",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{auth_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{auth_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "192.168.1.100",
+								"description": "IP in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3000",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3000"
+						},
+						"description": "Test successful Basic Auth with valid credentials and IP in whitelist."
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Basic Auth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"pm.test('WWW-Authenticate header is set', function () {",
+									"    pm.expect(pm.response.headers.get('WWW-Authenticate')).to.contain('Basic');",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{auth_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "wrongpassword",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "192.168.1.100",
+								"description": "IP in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3000",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3000"
+						},
+						"description": "Test Basic Auth with invalid credentials."
+					},
+					"response": []
+				},
+				{
+					"name": "No Auth Header",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 401', function () {",
+									"    pm.response.to.have.status(401);",
+									"});",
+									"pm.test('WWW-Authenticate header is set', function () {",
+									"    pm.expect(pm.response.headers.get('WWW-Authenticate')).to.contain('Basic');",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "192.168.1.100",
+								"description": "IP in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3000",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3000"
+						},
+						"description": "Test request without Authorization header."
+					},
+					"response": []
+				},
+				{
+					"name": "IP Not in Whitelist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 403', function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{auth_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{auth_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "1.1.1.1",
+								"description": "IP not in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3000",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3000"
+						},
+						"description": "Test request with IP not in whitelist."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Whitelist-Only Server",
+			"item": [
+				{
+					"name": "Successful Whitelist Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('X-Whitelist-Allowed header is set', function () {",
+									"    pm.expect(pm.response.headers.get('X-Whitelist-Allowed')).to.equal('true');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "192.168.1.100",
+								"description": "IP in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3001",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3001"
+						},
+						"description": "Test whitelist-only server with valid IP."
+					},
+					"response": []
+				},
+				{
+					"name": "IP Not in Whitelist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 403', function () {",
+									"    pm.response.to.have.status(403);",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Forwarded-For",
+								"value": "1.1.1.1",
+								"description": "IP not in whitelist"
+							}
+						],
+						"url": {
+							"raw": "http://{{server_address}}:3001",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3001"
+						},
+						"description": "Test whitelist-only server with IP not in whitelist."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Not-Found Server",
+			"item": [
+				{
+					"name": "404 for Any Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server_address}}:3002/any/path",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3002",
+							"path": [
+								"any",
+								"path"
+							]
+						},
+						"description": "Test not-found server returns 404 for any path."
+					},
+					"response": []
+				},
+				{
+					"name": "404 for Root Path",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test('Response is HTML', function () {",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.contain('text/html');",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{server_address}}:3002",
+							"protocol": "http",
+							"host": [
+								"{{server_address}}"
+							],
+							"port": "3002"
+						},
+						"description": "Test not-found server returns 404 for root path."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "server_address",
+			"value": "localhost"
+		},
+		{
+			"key": "auth_username",
+			"value": "admin"
+		},
+		{
+			"key": "auth_password",
+			"value": "password"
+		}
+	]
+}

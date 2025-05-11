@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+dist/
+
+# Environment
+.env
+
+# Configuration files with sensitive data
+config/.htpasswd
+config/whitelist.json
+
+# IDE
+.vscode/
+.idea/
+
+#Test
+coverage
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db 

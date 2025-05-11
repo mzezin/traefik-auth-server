@@ -1,0 +1,33 @@
+{
+  "name": "traefik-auth-server",
+  "version": "1.0.0",
+  "description": "Traefik authentication server with basic auth and IP whitelist",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node-dev --respawn src/index.ts"
+  },
+  "keywords": [
+    "traefik",
+    "auth",
+    "middleware"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fastify/basic-auth": "^6.2.0",
+    "dotenv": "^16.3.1",
+    "fastify": "^5.3.2",
+    "htpasswd-js": "^1.0.2",
+    "netmask": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/netmask": "^2.0.5",
+    "@types/node": "^20.10.0",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.3.2"
+  }
+}

@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+coverage 
+testsdist 
+.env 
+.git
+.gitignore 
+Dockerfile 
+README.md 
+LICENSE 
+postman/ 
+*.log
