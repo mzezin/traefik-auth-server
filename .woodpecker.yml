@@ -1,0 +1,15 @@
+steps:
+  build-and-push:
+    image: docker
+    commands:
+      - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+      - docker build -t $DOCKERHUB_USERNAME/traefik-auth-server:latest .
+      - docker push $DOCKERHUB_USERNAME/traefik-auth-server:latest
+    secrets: [dockerhub_username, dockerhub_token]
+    when:
+      branch: main
+      event: push
+
+backend_options:
+  kubernetes:
+    namespace: woodpecker
