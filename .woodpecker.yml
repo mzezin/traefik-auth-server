@@ -2,7 +2,7 @@ steps:
 - name: publish
   image: woodpeckerci/plugin-kaniko
   settings:
-    repo: ${DOCKERHUB_USERNAME}/{CI_REPO_NAME}
+    repo: mzezin123/${CI_REPO_NAME}
     tags: ${CI_COMMIT_SHA}, latest
     cache: true
     skip_tls_verify: false # set to true for testing registries ONLY with self-signed certs
