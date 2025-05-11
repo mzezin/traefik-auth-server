@@ -3,7 +3,7 @@ steps:
   image: woodpeckerci/plugin-kaniko
   settings:
     repo: mzezin123/${CI_REPO_NAME}
-    tags: ${CI_COMMIT_SHA}, latest
+    tags: latest
     cache: true
     skip_tls_verify: false # set to true for testing registries ONLY with self-signed certs
     build_args:
