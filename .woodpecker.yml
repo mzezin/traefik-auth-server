@@ -1,13 +1,32 @@
 steps:
+  set-username:
+    image: alpine
+    commands:
+      - echo "${DOCKERHUB_USERNAME}/${CI_REPO_NAME}" > /workspace/repo
+    environment:
+      DOCKERHUB_USERNAME:
+        from_secret: dockerhub_username
+    volumes:
+      - workspace:/workspace
+    when:
+      branch: main
+      event: push
+
   publish:
     image: woodpeckerci/plugin-docker-buildx
     settings:
-      repo: mzezin123/${CI_REPO_NAME}
-      tag: latest
+      repo: $(cat /workspace/repo)
+      tags: latest
+      platforms: linux/amd64,linux/arm64
       username:
         from_secret: dockerhub_username
       password:
         from_secret: dockerhub_token
+    volumes:
+      - workspace:/workspace
     when:
       branch: main
       event: push
+volumes:
+  - name: workspace
+    emptyDir: {}
