@@ -27,7 +27,3 @@ steps:
     when:
       branch: main
       event: push
-      
-volumes:
-  - name: workspace
-    emptyDir: {}
