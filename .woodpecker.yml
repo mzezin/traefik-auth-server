@@ -2,8 +2,8 @@ steps:
   debug:
     image: alpine
     commands:
-      - echo "DEBUG: DOCKERHUB_USERNAME=$${DOCKERHUB_USERNAME}"
-      - echo "DEBUG: CI_REPO_NAME=$${CI_REPO_NAME}"
+      - echo "DEBUG DOCKERHUB_USERNAME=$${DOCKERHUB_USERNAME}"
+      - echo "DEBUG CI_REPO_NAME=$${CI_REPO_NAME}"
     environment:
       DOCKERHUB_USERNAME:
         from_secret: dockerhub_username
